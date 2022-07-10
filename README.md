@@ -1,19 +1,10 @@
-# comics
+# Marvel comics
 
-## Project setup
-```
-npm install
-```
+An application that allows you to get information about characters and comics from Marvel.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+During development, I used the following technologies:
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
++ Vue.js;
++ Vue-router;
++ Marvel API;
++ Sass;
