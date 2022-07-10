@@ -1,15 +1,15 @@
 <template>
     <header className="app__header">
         <h1 className="app__title">
-            <a href="#">
+            <router-link to="/" exact>
                 <span>Marvel</span> information portal
-            </a>
+            </router-link>
         </h1>
         <nav className="app__menu">
             <ul>
-                <li><a href="#">Characters</a></li>
+                <li><router-link to="/" exact active-class="active-link">Characters</router-link></li>
                 /
-                <li><a href="#">Comics</a></li>
+                <li><router-link to="/comics" active-class="active-link" exact>Comics</router-link></li>
             </ul>
         </nav>
     </header>
@@ -39,4 +39,6 @@
                     margin: 0 8px
                     a:hover 
                         color: #9F0013
+    .active-link
+        color: #9f0013
 </style>

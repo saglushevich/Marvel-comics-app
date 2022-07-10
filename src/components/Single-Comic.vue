@@ -1,16 +1,59 @@
 <template>
-    <div className="single-comic">
-        <img src={xMen} alt="x-men" className="single-comic__img">
-        <div className="single-comic__info">
-            <h2 className="single-comic__name">X-Men: Days of Future Past</h2>
-            <p className="single-comic__descr">Re-live the legendary first journey into the dystopian future of 2013 - where Sentinels stalk the Earth, and the X-Men are humanity's only hope...until they die! Also featuring the first appearance of Alpha Flight, the return of the Wendigo, the history of the X-Men from Cyclops himself...and a demon for Christmas!?</p>
-            <p className="single-comic__descr">144 pages</p>
-            <p className="single-comic__descr">Language: en-us</p>
-            <div className="single-comic__price">9.99$</div>
-        </div>
-        <a href="#" className="single-comic__back">Back to all</a>
+    <div class="app">
+        <AppHeaderVue/>
+        <main>
+            <AppBannerVue/>
+            <div className="single-comic" v-if="!loading">
+                <img :src="comic.thumbnail.path + '.' + comic.thumbnail.extension" :alt="comic.title" className="single-comic__img">
+                <div className="single-comic__info">
+                    <h2 className="single-comic__name">{{comic.title}}</h2>
+                    <p className="single-comic__descr">{{comic.description.length ? comic.description : 'There is no description for this comic'}}</p>
+                    <p className="single-comic__descr">{{comic.pageCount ? comic.pageCount : "Unknown how many"}} pages</p>
+                    <p className="single-comic__descr">Language: en-us</p>
+                    <div className="single-comic__price">{{comic.prices[0].price ? comic.prices[0].price + '$' : 'OUT OF STOCK'}}</div>
+                </div>
+                <router-link to="/comics" className="single-comic__back">Back to all</router-link>
+            </div>
+            <div v-else class="comics__loading">Loading...</div>
+        </main>
     </div>
+    
 </template>
+
+<script>
+    import AppBannerVue from "./App-Banner.vue";
+    import AppHeaderVue from "./App-Header.vue";
+    import axios from "axios";
+    import apiKey from "@/apiKey";
+
+    export default {
+        components: {
+            AppBannerVue, AppHeaderVue
+        },
+        
+        data () {
+            return {
+                comicId: this.$route.params.id,
+                comic: {},
+                loading: true
+            }
+        },
+
+        methods: {
+            async getComicInfo () {
+                this.loading = true;
+                await axios.get(`https://gateway.marvel.com:443/v1/public/comics/${this.comicId}?apikey=${apiKey}`)
+                    .then(item => item.data.data.results[0]).then(item => this.comic = item)
+
+                this.loading = false;
+            }
+        },
+
+        mounted () {
+            this.getComicInfo();
+        }
+    }
+</script>
 
 <style lang="sass">
     .single-comic 

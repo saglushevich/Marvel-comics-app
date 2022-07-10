@@ -1,22 +1,23 @@
 <template>
     <div className="randomchar">
-        <div className="randomchar__block">
-            <img src={thor} alt="Random character" className="randomchar__img">
+        <div className="randomchar__block" v-if="!loading">
+            <img :src="character.thumbnail.path + '.' + character.thumbnail.extension" alt="Random character" className="randomchar__img">
             <div className="randomchar__info">
-                <p className="randomchar__name">Thor</p>
+                <p className="randomchar__name">{{character.name}}</p>
                 <p className="randomchar__descr">
-                    As the Norse God of thunder and lightning, Thor wields one of the greatest weapons ever made, the enchanted hammer Mjolnir. While others have described Thor as an over-muscled, oafish imbecile, he's quite smart and compassionate...
+                    {{character.description ? (character.description.length > 200 ?  character.description.slice(0, 200) : character.description): "There is no description for this character"}}
                 </p>
                 <div className="randomchar__btns">
-                    <a href="#" className="button button__main">
+                    <a :href="character.urls[0].url" className="button button__main">
                         <div className="inner">homepage</div>
                     </a>
-                    <a href="#" className="button button__secondary">
+                    <a :href="character.urls[1].url" className="button button__secondary">
                         <div className="inner">Wiki</div>
                     </a>
                 </div>
             </div>
         </div>
+        <div v-else style="margin: 0 auto"><img src="../assets/Spinner.svg" alt="Spinner"></div>
         <div className="randomchar__static">
             <p className="randomchar__title">
                 Random character for today!<br>
@@ -25,13 +26,39 @@
             <p className="randomchar__title">
                 Or choose another one
             </p>
-            <button className="button button__main">
+            <button @click="getNewCharacter" className="button button__main">
                 <div className="inner">try it</div>
             </button>
-            <img src={mjolnir} alt="mjolnir" className="randomchar__decoration">
+            <img src="../assets/mjolnir.png" alt="mjolnir" className="randomchar__decoration">
         </div>
     </div>
 </template>
+
+<script>
+    import apiKey from '@/apiKey';
+    import axios from 'axios';
+
+    export default {
+        data () {
+            return {
+                character: {},
+                loading: true
+            }
+        },
+        methods: {
+            async getNewCharacter () {
+                this.loading = true;
+                const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+                await axios.get(`https://gateway.marvel.com:443/v1/public/characters/${id}?apikey=${apiKey}`)
+                    .then(items => items.data.data.results[0]).then(item => this.character = item) ;
+                this.loading = false
+            }
+        },
+        mounted() {
+            this.getNewCharacter();
+        }
+    }
+</script>
 
 <style lang="sass">
     .randomchar 

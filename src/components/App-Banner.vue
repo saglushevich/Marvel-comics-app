@@ -25,6 +25,4 @@
                 color: #FFFFFF
                 padding-left: 83px
                 padding-top: 18px
-            
-        
 </style>

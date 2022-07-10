@@ -1,48 +1,53 @@
 <template>
-    <div className="char__list">
-            <ul className="char__grid">
-                <li className="char__item">
-                    <img src={abyss} alt="abyss">
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item char__item_selected">
-                    <img src={abyss} alt="abyss">
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss">
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss">
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss">
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss">
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss">
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss">
-                    <div className="char__name">Abyss</div>
-                </li>
-                <li className="char__item">
-                    <img src={abyss} alt="abyss">
-                    <div className="char__name">Abyss</div>
-                </li>
-            </ul>
-            <button className="button button__main button__long">
-                <div className="inner">load more</div>
-            </button>
-        </div>
+    <div className="char__list" v-if="!loading">
+        <ul className="char__grid" v-if="!loading">
+            <li @click="onSelectCharacter(item.id)" :key="item.id" className="char__item" v-for="item in charList">
+                <img :src="item.thumbnail.path + '.' + item.thumbnail.extension" :alt="item.name">
+                <div className="char__name">{{item.name}}</div>
+            </li>
+        </ul>
+        <button @click="getData(offset)" className="button button__main button__long">
+            <div className="inner">load more</div>
+        </button>
+    </div>
+    <div v-else style="margin: 0 auto"><img src="../assets/Spinner.svg" alt="Spinner"></div>
 </template>
+
+<script>
+    import apiKey from '../apiKey'
+    import axios from 'axios'
+
+    export default {
+        data () {
+            return {
+                loading: true,
+                charList: [],
+                offset: 0
+            }
+        },
+
+        methods: {
+            async getData(offset) {
+                this.loading = true;
+
+                await axios.get(`https://gateway.marvel.com:443/v1/public/characters?limit=9&offset=${offset}&apikey=${apiKey}`)
+                    .then(items => items.data.data.results)
+                    .then(items => this.charList = [...this.charList, ...items]);
+                    
+                this.loading = false;
+                this.offset += 9
+            },
+
+            onSelectCharacter (character) {
+                this.$emit('selectCharacter', character)
+            }
+        },
+
+        mounted () {
+            this.getData(this.offset);
+        }
+    }
+</script>
 
 <style lang="sass">
     .char 
